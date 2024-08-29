@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String?
+  bookings  Booking[]
+  role      Role      @default(USER)
+  customers Customer[]
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Booking {
+  id              Int      @id @default(autoincrement())
+  room            Room     @relation(fields: [room_id], references: [id])
+  room_id         Int
+  user            User     @relation(fields: [user_id], references: [id])
+  user_id         Int
+  customer        Customer @relation(fields: [customer_id], references: [id])
+  customer_id     Int
+  check_in_date   DateTime
+  check_out_date  DateTime
+  created_at      DateTime @default(now())
+  status          Status   @default(PENDING)
+  total_price     Float
+  booking_details Booking_Detail[]
+}
+
+enum Status {
+  PENDING
+  ACCEPTED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+model Booking_Detail {
+  booking       Booking @relation(fields: [booking_id], references: [id])
+  booking_id    Int
+  detail_type   Booking_Detail_Type
+  value         String
+  
+  @@id([booking_id, detail_type])
+}
+
+enum Booking_Detail_Type {
+  ACCEPTED_AT
+  REJECTED_AT
+  REJECTED_REASON
+  CANCELED_AT
+  CANCELED_REASON
+  DISCOUNT
+  DISCOUNT_REASON
+}
+
+model Customer {
+  id        Int       @id @default(autoincrement())
+  email     String
+  lastname  String
+  firstname String
+  phone     String
+  bookings  Booking[]
+  user      User     @relation(fields: [user_id], references: [id])
+  user_id   Int
+}
+
+model Room {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String
+  price       Float
+  image_url   String
+  location    Location  @relation(fields: [location_id], references: [id])
+  location_id Int
+  bookings    Booking[]
+}
+
+model Location {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  rooms       Room[]
+}
