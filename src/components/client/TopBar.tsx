@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import * as React from 'react';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -12,6 +12,7 @@ import { useOutsideClick } from "./hook";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import CircularProgress from '@mui/material/CircularProgress';
 
 type Location = {
   id: number;
@@ -21,8 +22,10 @@ type Location = {
 export default function TopBar(props:{locationSearchData:Location[]}) {
     return (
       <div className="tall:sticky tall:top-0 flex flex-col sm:flex-row justify-center items-center p-2 gap-4 bg-blue-300 w-full z-20">
-        <SearchBar data={props.locationSearchData}/>
-        <DateRangeInput/>
+        <Suspense fallback={<CircularProgress />}>
+          <SearchBar data={props.locationSearchData}/>
+          <DateRangeInput/>
+        </Suspense>
       </div>
     );
   }
