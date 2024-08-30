@@ -2,6 +2,7 @@ import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@
 import { PrismaClient } from "@prisma/client";
 import Image from "next/image";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Link from "next/link";
 
 const prisma = new PrismaClient();
 
@@ -39,6 +40,7 @@ type Location = {
 
 function Room(props:Room&{location:Location}){
   return(
+    <Link href={`./room/${props.id}`}>
     <Card className="max-w-80">
       <div className="h-48 w-full">
         <div className="relative h-full">
@@ -66,6 +68,6 @@ function Room(props:Room&{location:Location}){
         </div>
       </div>
     </Card>
-
+    </Link>
   )
 }
