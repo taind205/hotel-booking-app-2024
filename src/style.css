@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .view-screen {
+    @apply flex flex-col gap-4 items-center bg-slate-900 h-screen overflow-auto
+  }
+}
